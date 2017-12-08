@@ -4,17 +4,22 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 const bearerToken = require("express-bearer-token");
+const passport = require('passport');
+const APIKeyStrategy = require('passport-localapikey');
 
 var app = express();
 let env = process.env.NODE_ENV || "development";
 app.set("secret", process.env.SECRET);
 app.set("appId", process.env.APPID);
+app.set("apiKeySecret",process.env.API_KEY_SECRET);
 
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bearerToken());
+
+
 
 require('./routes')(app);
 

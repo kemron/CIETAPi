@@ -3,6 +3,6 @@ module.exports = class UserProfileReadModel {
     this.id = userDbModel._id;
     this.name = `${userDbModel.firstname} ${userDbModel.lastname}`;
     this.emailAddress = userDbModel.email;
-    this.allergens = [];
+    this.allergens = userDbModel.allergens;
   }
 }

@@ -12,7 +12,11 @@ const getTokenSchema = Joi.object().keys({
   password: Joi.string().alphanum().min(7).max(25).required()
 })
 
+const allergenSchema = Joi.array().min(1).items(Joi.string().required());
+
+
 module.exports = {
   createProfileSchema,
-  getTokenSchema
+  getTokenSchema,
+  allergenSchema
 }
