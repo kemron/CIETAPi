@@ -12,9 +12,7 @@ module.exports = function (app) {
 
   app.get("/api/fooditems", findFoodItems);
   
-
 }
-
 
 async function findFoodItems(req, resp, next) {
   const nameFilter = req.query.name;

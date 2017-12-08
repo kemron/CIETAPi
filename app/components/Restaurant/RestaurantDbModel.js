@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
-
+const _ = require('lodash')
 
 const menuItemSchema = new mongoose.Schema({
-  id: mongoose.SchemaTypes.ObjectId,
-  name: { type: String, required: true, unique: true, },
+  name: String,
   image: String,
   description: String,
   ingredients: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FoodItem' }]
 })
 
-const menuItemModel = mongoose.model('MenuItem', menuItemSchema);
+const MenuItem = mongoose.model('MenuItem', menuItemSchema);
 
 
 const restaurantSchema = new mongoose.Schema({
@@ -20,19 +19,11 @@ const restaurantSchema = new mongoose.Schema({
 });
 
 
-restaurantSchema.methods.addMenuItem = function (name, imageUri, description, ingredients) {
-  let menuItem = new menuItemModel({
-    name,
-    image: imageUri,
-    description,
-    ingredients
-  })
-  _this.menuItems.push(menuItem);
-}
-
-
-const model = mongoose.model('Restaurant', restaurantSchema);
+const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 
 
 
-module.exports = model;
+module.exports = {
+  Restaurant,
+  MenuItem
+} 

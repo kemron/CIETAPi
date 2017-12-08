@@ -6,15 +6,18 @@ const registerRestaurantSchema = Joi.object().keys({
 });
 
 const addMenuItemSchema = Joi.object().keys({
-  name: Joi.string().email().required(),
+  name: Joi.string().required(),
   description: Joi.string(),
   image: Joi.string().uri(),
-  ingredients:Joi.array().min(1).items(Joi.string().required())
+  ingredients: Joi.array().min(1).items(Joi.string().required())
 
 })
+
+const addIngredients = Joi.array().min(1).items(Joi.string().required())
 
 
 module.exports = {
   registerRestaurantSchema,
-  addMenuItemSchema
+  addMenuItemSchema,
+  addIngredients
 }

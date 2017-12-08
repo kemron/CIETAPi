@@ -9,15 +9,27 @@ module.exports = function (app) {
 
   const jwtValidator = JwtValidatorMiddleware({ secret: app.get("secret"), appID: app.get("appID") })
 
-  app.post("/api/users", SchemaValidator(schemas.createProfileSchema), createUserProfile);
+  app.post("/api/users",
+    SchemaValidator(schemas.createProfileSchema),
+    createUserProfile);
 
-  app.post("/api/users/token", SchemaValidator(schemas.getTokenSchema), authenticate(app));
+  app.post("/api/users/token",
+    SchemaValidator(schemas.getTokenSchema),
+    authenticate(app));
 
-  app.get("/api/users/me", jwtValidator, getProfile);
+  app.get("/api/users/me",
+    jwtValidator,
+    getProfile);
 
-  app.post("/api/users/me/allergens", jwtValidator, SchemaValidator(schemas.allergenSchema), addAllergens)
+  app.post("/api/users/me/allergens",
+    jwtValidator,
+    SchemaValidator(schemas.allergenSchema),
+    addAllergens)
 
-  app.delete("/api/users/me/allergens", jwtValidator, SchemaValidator(schemas.allergenSchema), deleteAllergens)
+  app.delete("/api/users/me/allergens",
+    jwtValidator,
+    SchemaValidator(schemas.allergenSchema),
+    deleteAllergens)
 
 }
 
