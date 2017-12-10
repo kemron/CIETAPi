@@ -81,7 +81,7 @@ async function addAllergens(userId, allergens) {
     throw new InvalidAllergensError();
   }
   let user = await User.findById(userId);
-  user.allergens = _.unionBy(user.allergens, fooditems, item => item.toString());
+  user.allergens.addToSet(...fooditems)
   return await user.save();
 }
 
@@ -103,7 +103,7 @@ async function removeAllergens(userId, allergens) {
     throw new InvalidAllergensError();
   }
   let user = await User.findById(userId);
-  user.allergens = _.xorBy(user.allergens, fooditems, item => item.toString());
+  user.allergens.pull(...allergens);
   return await user.save();
 }
 

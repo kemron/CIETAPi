@@ -1,4 +1,5 @@
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 
 const createProfileSchema = Joi.object().keys({
   firstname: Joi.string().min(3).required(),
@@ -12,7 +13,7 @@ const getTokenSchema = Joi.object().keys({
   password: Joi.string().alphanum().min(7).max(25).required()
 })
 
-const allergenSchema = Joi.array().min(1).items(Joi.string().required());
+const allergenSchema = Joi.array().min(1).items(Joi.objectId().required());
 
 
 module.exports = {

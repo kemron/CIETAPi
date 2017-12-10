@@ -7,6 +7,7 @@ const uuid = require('uuid')
 const crypto = require('crypto');
 const _ = require('lodash')
 const HttpStatus = require("http-status-codes");
+const mongoose = require('mongoose');
 
 module.exports = {
   searchRestaurantsByName,
@@ -17,7 +18,18 @@ module.exports = {
   addMenuItem,
   removeMenuItem,
   addIngredients,
-  removeIngredient
+  removeIngredient,
+  getRestaurantDetailsByClientId,
+  getAllRestaurants
+}
+
+
+
+/**
+ * Retrieves all recorded restaurants
+ */
+function getAllRestaurants() {
+  return Restaurant.find({}).exec();
 }
 
 /**
@@ -26,7 +38,7 @@ module.exports = {
  */
 function searchRestaurantsByName(name) {
   const query = {
-    name: { '$regex': name, '$options': 'i' }
+    name: { '$regex': `^${name}`, '$options': 'i' }
   }
   return Restaurant.find(query).limit(100).exec();
 }
@@ -34,15 +46,44 @@ function searchRestaurantsByName(name) {
 
 /**
  * Retrieves a single unique restaurant by its Id
- * @param {ObjectId} id restaurant id
+ * @param {String} id restaurant id
  */
 function findRestaurantById(id) {
   return Restaurant.findById(id);
 }
 
+
+/**
+ * Retrieves a single restaurant by the client that registered it
+ * @param {String} clientid 
+ */
+function getRestaurantDetailsByClientId(clientId) {
+  return Restaurant.findOne({ clientId }).populate("menu.ingredients").exec();
+}
+
+
+/**
+ * Retrieves Restaurant menu annotate with allergen data
+ * @param {String} userId 
+ * @param {String} restaurantId 
+ * @param {String | Optional} mealName filters meals included in response by name
+ */
+async function getRestaurantMenuWithAllergenData(userAllergens, restaurantId) {
+  let restaurant = await Restaurant.findById(restaurantId).populate("menu.ingredients").exec();
+  if (!restaurant) {
+    throw new InvalidArgument("restaurantId")
+  }
+
+  let augmentedMenu = restaurant.menu.map((item, index) => {
+    let augmentedIngredients = item.ingredients.include()
+  })
+
+}
+
+
 /**
  * Retrieves all restaurants with menus free of all allergens
- * @param {ObjectId} userId unique id of user
+ * @param {String} userId unique id of user
  */
 async function findRecommendedRestaurants(userId) {
   if (!userId) {
@@ -51,9 +92,9 @@ async function findRecommendedRestaurants(userId) {
   let user = await UserComponent.getUserById(userId);
   let allergens = user.allergens.map(a => a.id);
   const query = {
-    "menu.ingredients": { $nin: [allergens] }
+    "menu.ingredients": { $nin: allergens }
   }
-  await Restaurant.find(query).limit(100).exec();
+  return Restaurant.find(query).populate("menu.ingredients").limit(100).exec();
 }
 
 
@@ -106,6 +147,7 @@ async function addMenuItem(clientId, { name, image, description, ingredients }) 
     description,
     ingredients
   })
+
   restaurant.menu = _.unionBy(restaurant.menu, [menuItem], item => item.name);
   return restaurant.save();
 }
@@ -113,38 +155,35 @@ async function addMenuItem(clientId, { name, image, description, ingredients }) 
 /**
  * Removes a menu item for a given client with the specifed menuItemId
  * @param {string} clientId 
- * @param {ObjectId} menuItemId 
+ * @param {String} menuItemId 
  */
 async function removeMenuItem(clientId, menuItemId) {
   const restaurant = await Restaurant.findOne({ clientId });
-  restaurant.menu.splice(restaurant.menu.indexOf(m => m.id === menuItemId), 1);
-  return restaurant.save();
+  restaurant.menu.pull(menuItemId);
 }
 
 /**
  * Adds an  ingredient to a meal menu item on a restaurant's menu
  * @param {String} clienId 
- * @param {ObjectId} menuItemId 
- * @param {ObjectId} ingredientId 
+ * @param {String} menuItemId 
+ * @param {String} ingredientId 
  */
 async function addIngredients(clientId, menuItemId, ingredientIds) {
   const restaurant = await Restaurant.findOne({ clientId });
 
-  const menuItemIdx = restaurant.menu.indexOf(m => m.id === menuItemId);
-  if (menuItemIdx < 0) {
+  const menuItem = restaurant.menu.id(menuItemId);
+  if (!menuItem) {
     throw new InvalidArgument("menuItemId")
   }
 
   if (!Array.isArray(ingredientIds)) {
     throw new InvalidArgument("ingredientIds")
   }
-  const ingredients = await Promise.all(
+  const ingredients = (await Promise.all(
     ingredientIds.map(ingredientId => FoodItemComponent.findFoodItemById(ingredientId))
-  );
-  ingredients.forEach(ingredient => {
-    restaurant.menu[menuItemIdx].ingredients.push(ingredientId);
-  })
+  ))
 
+  menuItem.ingredients.addToSet(...ingredients)
   return restaurant.save()
 }
 
@@ -152,28 +191,25 @@ async function addIngredients(clientId, menuItemId, ingredientIds) {
 
 /**
  * Removes an  ingredient from a meal menu item on a restaurant's menu
- * @param {String} clienId 
- * @param {ObjectId} menuItemId 
- * @param {ObjectId} ingredientId 
+ * @param {String} clientId 
+ * @param {String} menuItemId 
+ * @param {String} ingredientId 
  */
-async function removeIngredient(clienId, menuItemId, ingredientId) {
-  const [restaurant, ingredient] = await Promise.all(
-    Restaurant.findOne({ clientId }),
-    FoodItemComponent.findFoodItemById(ingredientId)
+async function removeIngredient(clientId, menuItemId, ingredientId) {
+  const [restaurant, ingredient] = await Promise.all([
+    Restaurant.findOne({ clientId }).exec(),
+    FoodItemComponent.findFoodItemById(ingredientId),
+  ]
   );
 
   if (!ingredient) {
     throw new InvalidArgument("ingredientId");
   }
-  const menuItemIdx = restaurant.menu.indexOf(m => m.id === menuItemId);
-  if (menuItemIdx < 0) {
+  const menuItem = restaurant.menu.id(menuItemId);
+  if (!menuItem) {
     throw new InvalidArgument("menuItemId")
   }
-  const ingredientIdx = restaurant.menu[menuItemIdx].ingredients.indexOf(i => i.id === ingredientId);
-  if (ingredientIdx < 0) {
-    throw new Exception("Ingredient is not used in meal", HttpStatus.BAD_GATEWAY);
-  }
-  restaurant.menu[menuItemIdx].ingredients.splice(ingredientIdx, 1);
+  menuItem.ingredients.pull(ingredientId);
   return restaurant.save()
 }
 

@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const FoodItems = require('./FoodItemDbModel')
 
 
@@ -6,7 +8,7 @@ const FoodItems = require('./FoodItemDbModel')
  * @param {ObjectId} id 
  */
 function findFoodItemById(id) {
-  return FoodItems.findById(id);
+  return FoodItems.findById(id).exec();
 }
 
 /**
@@ -28,7 +30,7 @@ function findFoodItemsIn(itemList) {
   if (!Array.isArray(itemList)) { return }
   return FoodItems.find()
     .where('_id')
-    .in(itemList)
+    .in(itemList.map(item => mongoose.Types.ObjectId(item)))
     .exec();
 }
 
