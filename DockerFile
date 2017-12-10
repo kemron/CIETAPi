@@ -1,4 +1,6 @@
 FROM node:latest
+RUN apk add --no-cache --update make gcc g++ python libgcc libstdc++
+RUN npm install -g node-gyp
 
 WORKDIR /app
 ADD . /app

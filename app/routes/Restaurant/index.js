@@ -146,9 +146,7 @@ async function getRecommendedRestaurants(req, resp, next) {
 
 async function searchRestaurantMenu(req, resp, next) {
   try {
-    resp.json(
-      req.query.name ? await RestaurantComponent.searchRestaurantsByName(req.query.name) :
-        await RestaurantComponent.findRestaurantById())
+    resp.json(await RestaurantComponent.getRestaurantMenuWithAllergenData(req.jwt.sub, req.id))
   } catch (err) {
     next(err)
   }

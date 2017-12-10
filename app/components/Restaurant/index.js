@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const _ = require('lodash')
 const HttpStatus = require("http-status-codes");
 const mongoose = require('mongoose');
+const AllergenMenuFilterWorker = require('./AllergenMenuFilterWorker');
 
 module.exports = {
   searchRestaurantsByName,
@@ -20,7 +21,8 @@ module.exports = {
   addIngredients,
   removeIngredient,
   getRestaurantDetailsByClientId,
-  getAllRestaurants
+  getAllRestaurants,
+  getRestaurantMenuWithAllergenData
 }
 
 
@@ -68,16 +70,19 @@ function getRestaurantDetailsByClientId(clientId) {
  * @param {String} restaurantId 
  * @param {String | Optional} mealName filters meals included in response by name
  */
-async function getRestaurantMenuWithAllergenData(userAllergens, restaurantId) {
-  let restaurant = await Restaurant.findById(restaurantId).populate("menu.ingredients").exec();
+async function getRestaurantMenuWithAllergenData(userId, restaurantId) {
+  let [user, restaurant] = await Promise.all(
+    [
+      UserComponent.getUserById(userId),
+      Restaurant.findById(restaurantId).populate("menu.ingredients").exec()
+    ]
+  )
   if (!restaurant) {
     throw new InvalidArgument("restaurantId")
   }
 
-  let augmentedMenu = restaurant.menu.map((item, index) => {
-    let augmentedIngredients = item.ingredients.include()
-  })
-
+  let users = await AllergenMenuFilterWorker(restaurant, user.allergens);
+  return users;
 }
 
 
