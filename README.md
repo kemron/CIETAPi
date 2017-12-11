@@ -664,3 +664,161 @@ Get Registered Client Restaurant (Admin)
 
   * **Code:** 401 UNAUTHORIZED <br />
     **Content:** `Unauthorized access`
+
+
+
+
+Add meal to menu (Admin)
+----
+Adds a new meal to restaurant menu for client
+ 
+* **URL**
+
+/api/admin/clients/me/menuitems
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+
+ None
+
+* **Data Params**
+
+  `{
+	"name":"Vegan Cheesecake",
+	"description":"Veganville's best fake cheese",
+	"image":"http://testing.com/1",
+	"ingredients":["5a2c769dd562eba69c0d269d"]
+}`
+
+
+* **Query Params**
+
+   **Required:**
+   key = [string] - clients api key generated at signup <br/>
+   
+   secret =[string] - client secret generated at signup
+  
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+	 None
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `Unauthorized access`
+
+
+
+Remove meal from menu (Admin)
+----
+Adds a new meal to restaurant menu for client
+ 
+* **URL**
+
+/api/admin/clients/me/menuitems/:id
+* **Method:**
+
+  `DELETE`
+  
+*  **URL Params**
+ `id = {menuitemid}`
+
+* **Data Params**
+	None
+
+
+* **Query Params**
+
+   **Required:**
+   key = [string] - clients api key generated at signup <br/>
+   
+   secret =[string] - client secret generated at signup
+  
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+	 None
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `Unauthorized access`
+
+
+
+Add meal ingredients (Admin)
+----
+Adds ingredients to a menu item
+ 
+* **URL**
+
+/api/admin/clients/me/menuitems/:id/ingredients
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+ `id = {menuitemid}`
+
+* **Data Params**
+	`[ingredientId,ingredientId2,...]`
+
+
+* **Query Params**
+
+   **Required:**
+   key = [string] - clients api key generated at signup <br/>
+   
+   secret =[string] - client secret generated at signup
+  
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+	 None
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `Unauthorized access`
+
+
+
+Remove meal ingredient (Admin)
+----
+ Removes ingredient from menu item 
+* **URL**
+
+/api/admin/clients/me/menuitems/:menuItemId/ingredients/:ingredientId
+* **Method:**
+
+  `DELETE`
+  
+*  **URL Params**
+ `menuItemId= {id of menu item}`
+ `ingredientId= {id of ingredient}`
+
+* **Data Params**
+None
+* **Query Params**
+
+   **Required:**
+   key = [string] - clients api key generated at signup <br/>
+   
+   secret =[string] - client secret generated at signup
+  
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+	 None
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `Unauthorized access`
