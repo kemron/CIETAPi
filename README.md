@@ -33,7 +33,6 @@ Get allergen/ meal ingredient
 }`
  
 
-
 Get all allergen/ meal ingredients
 ----
  Retrives all meal ingredients/allergens
@@ -76,7 +75,6 @@ None
 ]`
  
 
-
  **Register User**
 ----
 Registers a new user
@@ -115,7 +113,6 @@ None
   
 
 
-
 **Get Access Token**
 ----
    Retrieves access token for subsequent api calls for user account 
@@ -150,7 +147,6 @@ None
     "success": false,
     "message": "Authentication failed. Credentials mismatch"
 }`
-
 
 
 Get user profile
@@ -202,7 +198,6 @@ None
 }`
 
  
- 
 Add user allergen Details
 ----
  Adds allergens to user profile
@@ -247,7 +242,6 @@ None
 }`
 
  
-
 
 
 Remove user allergen Details
@@ -298,3 +292,375 @@ None
 }`
 
  
+
+ Restaurant Recommendation
+----
+Retrieves restaurants where all menu items are allergen free
+
+* **URL**
+
+ /api/restaurants/recommended
+* **Method:**
+
+  `GET`
+  
+*  **HTTP Header**
+`Authorization Bearer [access token]`
+* **URL Params**
+
+	None
+
+* **Data Params**
+
+ None
+  
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `[
+    {
+        "name": "Olive yard hen",
+        "location": "123 farm drive",
+        "menu": [
+            {
+                "description": "Hen drenched in teriyaki sauce",
+                "image": "http://testing.com/images/3",
+                "name": "Yakuza chicken",
+                "ingredients": [
+                    {
+                        "name": "Olives",
+                        "id": "5a2c76aed562eba69c0d26a8"
+                    },
+                    {
+                        "name": "Cauliflower",
+                        "id": "5a2c769dd562eba69c0d269d"
+                    }
+                ],
+                "id": "5a2c8c8d185ae0392099827b"
+            },
+          ...
+
+]`
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Token authentication failed"
+}`
+
+  OR
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Missing token"
+}`
+
+ 
+
+
+Restaurant menu browsing
+----
+  Retrieves restaurant menu with meals
+  and ingredients annotated with user allergen markers
+  
+* **URL**
+
+ /api/restaurants/:id/menu
+* **Method:**
+
+  `GET`
+  
+*  **HTTP Header**
+`Authorization Bearer [access token]`
+*  **URL Params**
+
+   **Required:**
+ 
+   `id=[Guid]` - Restaurant Id
+
+* **Data Params**
+
+ None
+  
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+    `{
+    "name": "My Restaurant",
+    "location": "test description",
+    "menu": [
+        {
+            "description": "test description",
+            "image": "http://testing.com",
+            "name": "Test Name",
+            "ingredients": [
+                {
+                    "name": "spidermonkey",
+                    "id": "5a2c76aed562eba69c0d26a8",
+                    "isAllergen": true
+                },
+                {
+                    "name": "Cauliflower",
+                    "id": "5a2c769dd562eba69c0d269d",
+                    "isAllergen": false
+                }
+            ],
+            "id": "5a2c8c8d185ae0392099827b",
+            "isSafe": false
+        },
+	    ...
+    ],
+    "id": "5a2c8ad34c7dae1bfce5d87c"
+}`
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Token authentication failed"
+}`
+
+  OR
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Missing token"
+}`
+
+ 
+
+Allergen free meal search
+----
+ Retrieves safe versions of meals across all registered restaurants filtered by name
+* **URL**
+
+/api/restaurants/all/menu/search?item=m
+* **Method:**
+
+  `GET`
+  
+*  **HTTP Header**
+`Authorization Bearer [access token]`
+*  **URL Params**
+
+	None
+* **Data Params**
+
+ None
+
+* **Query Params**
+
+ `item=[string] - name of meal`
+  
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+    `[
+    {
+        "_id": "5a2e020cf802ec494427b976",
+        "name": "Kazakhstan's Fried Carrots ",
+        "location": "Kazakhstan ",
+        "menu": [
+            {
+                "_id": "5a2e02bcf802ec494427b977",
+                "description": "Carrots slow fried and served with soy sauce",
+                "image": "http://testing.com/15",
+                "name": "Mmm Carrots,
+                "ingredients": [
+                    {
+                        "name": "Carrots",
+                        "id": "5a29fe10d562eba69c0c9cf8"
+                    },
+                    {
+                        "name": "Soy",
+                        "id": "5a2c769dd562eba69c0d269d"
+                    }
+                ]
+            }
+        ]
+    }
+]`
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Token authentication failed"
+}`
+
+  OR
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Missing token"
+}`
+
+  OR
+
+  * **Code:** 400 BAD REQUEST<br />
+    **Content:** ` string query parameter [item] is required`
+
+ 
+
+
+
+
+Get all registered restaurants
+----
+Retrieves all restaurants. 
+Uses optional name query parameter for filtering by name 
+   * 
+* **URL**
+
+/api/restaurants?name=olive%20garden
+* **Method:**
+
+  `GET`
+  
+*  **HTTP Header**
+`Authorization Bearer [access token]`
+
+*  **URL Params**
+
+ None
+
+* **Query Params**
+
+   **Optional:**
+ `item=[string] - name of meal`
+  
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+    ` [ {
+        "name": "My Restaurant",
+        "location": "test description",
+        "menu": [
+            {
+                "description": "test description",
+                "image": "http://testing.com/1",
+                "name": "Test meal",
+                "ingredients": [
+                    "5a2c76aed562eba69c0d26a8",
+                    "5a2c769dd562eba69c0d269d"
+                ],
+                "id": "5a2c8c8d185ae0392099827b"
+            },
+         ...
+        ],
+        "id": "5a2c8ad34c7dae1bfce5d87c"
+    }
+    ...
+]`
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Token authentication failed"
+}`
+
+  OR
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `{
+    "success": false,
+    "message": "Missing token"
+}`
+ 
+
+
+
+
+Get Registered Client Restaurant (Admin)
+----
+ Retrieves the restaurant registered to client
+ 
+* **URL**
+
+/api/admin/clients/me
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+ None
+
+* **Query Params**
+
+   **Required:**
+   key = [string] - clients api key generated at signup
+   secret =[string] - client secret generated at signup
+  
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+    `{
+    "name": "Test restaurant ",
+    "location": "Never land",
+    "menu": [
+        {
+            "description": "test description",
+            "image": "http://testing.com",
+            "name": "Test meal 3",
+            "ingredients": [
+                {
+                    "name": "Peanut Butter",
+                    "id": "5a29fe10d562eba69c0c9cf8"
+                },
+                {
+                    "name": "Cauliflower",
+                    "id": "5a2c769dd562eba69c0d269d"
+                }
+            ],
+            "id": "5a2e02bcf802ec494427b977"
+        },
+        {
+            "description": "test description",
+            "image": "http://testing.com",
+            "name": "Test meal 2",
+            "ingredients": [
+                {
+                    "name": "Peanut Butter",
+                    "id": "5a29fe10d562eba69c0c9cf8"
+                }
+            ],
+            "id": "5a2e02c7f802ec494427b978"
+        },
+        {
+            "description": "test description",
+            "image": "http://testing.com/1",
+            "name": "Test meal1",
+            "ingredients": [
+                {
+                    "name": "Cauliflower",
+                    "id": "5a2c769dd562eba69c0d269d"
+                }
+            ],
+            "id": "5a2e02dbf802ec494427b979"
+        }
+    ],
+    "id": "5a2e020cf802ec494427b976"
+}`
+
+* **Error Response:**
+
+  * **Code:** 401 UNAUTHORIZED <br />
+    **Content:** `Unauthorized access`
