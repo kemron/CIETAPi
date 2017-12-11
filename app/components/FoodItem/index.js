@@ -1,5 +1,7 @@
-const mongoose = require('mongoose');
 
+
+const mongoose = require('mongoose');
+const _ = require("lodash");
 const FoodItems = require('./FoodItemDbModel')
 
 
@@ -19,7 +21,7 @@ function findFoodItemsByName(name) {
   const query = {
     name: { '$regex': name, '$options': 'i' }
   }
-  return FoodItems.find(query);
+  return FoodItems.find(query).exec();
 }
 
 /**
@@ -42,9 +44,28 @@ function findAllFoodItems() {
 }
 
 
+/**
+ * Batch inserts ingredients into database
+ * @param {Array} ingredients 
+ */
+function addIngredients(ingredients) {
+  if (!ingredients) {
+    return Promise.reject("parameter must be defined")
+  }
+  if (_.isArray(ingredients)) {
+    let records = ingredients.map(i => {
+      return {name: i }
+      });
+    return FoodItems.insertMany(records)
+  }
+  return FoodItems.create({ name: ingredients })
+}
+
+
 module.exports = {
   findAllFoodItems,
   findFoodItemById,
   findFoodItemsByName,
-  findFoodItemsIn
+  findFoodItemsIn,
+  addIngredients
 }

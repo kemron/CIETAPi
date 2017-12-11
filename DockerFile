@@ -4,7 +4,7 @@ WORKDIR /app
 ADD . /app
 RUN mkdir /logs && touch /logs/access.production.log
 RUN npm install
-ENV PORT = 80
-ENV NODE_ENV production
-EXPOSE 80
+ENV PORT=5000
+ENV NODE_ENV=production
+EXPOSE 5000
 CMD [ "npm","start" ]

@@ -17,6 +17,7 @@ module.exports = function (app) {
 
   /**
    * Retrives all meal ingredients/allergens
+   * with optional query for name
    */
   app.get("/api/fooditems", findFoodItems);
 

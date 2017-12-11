@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 const bearerToken = require("express-bearer-token");
 var app = express();
+
 let env = process.env.NODE_ENV || "development";
 app.set("secret", process.env.SECRET);
 app.set("appId", process.env.APPID);
@@ -34,6 +35,7 @@ app.use(bearerToken());
 
 
 require('./routes')(app);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
