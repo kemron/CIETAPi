@@ -585,6 +585,35 @@ Uses optional name query parameter for filtering by name
  
 
 
+Register new restaurant client (Admin)
+----
+Registers a new client.
+* **URL**
+
+/api/admin/clients
+
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+None
+* **Data Params**
+
+`{
+	"name":"Olive garden",
+	"location":"123 Olive drive"
+}`
+* **Query Params**
+None
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+`{
+    "key": "b8fad12d-cc61-4d35-81d4-b1062f9d636d",
+    "secret": "iQq9Q0dhbsXeIjtqif_oCeElVPXWbuRnPwI4tnmYsiM"
+}`
 
 
 Get Registered Client Restaurant (Admin)
