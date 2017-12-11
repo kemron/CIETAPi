@@ -35,8 +35,8 @@ module.exports = function (app) {
   )
 
   /**
-   * Retrives safe versions of meals across all
-   * regitered restaurants filtered by name
+   * Retrieves  safe versions of meals across all
+   * registered restaurants filtered by name
    * 
    * eg /api/restaurants/all/menu?item=fried%20chubacca
    */
@@ -57,7 +57,7 @@ module.exports = function (app) {
 
   /**
    * Registers a new client.
-   * resturns api key and secret
+   * returns api key and secret
    */
   app.post("/api/admin/clients",
     SchemaValidator(schemas.registerRestaurantSchema),

@@ -57,10 +57,12 @@ async function getUserWithCredential(email, password) {
     .update(email)
     .digest("hex");
 
-  return new UserProfileReadModel(await User.findOne({
+  let user = await User.findOne({
     email,
     password: passwordHash
-  }).populate('allergens'));
+  }).populate('allergens')
+
+  return user ? new UserProfileReadModel(user) : null;
 }
 
 

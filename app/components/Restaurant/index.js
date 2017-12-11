@@ -57,7 +57,8 @@ async function searchAllergenFreeMealsByName(userId, item) {
   }
   query = Object.assign(query, _.isEmpty(allergens) ? {} :
     { "menu": { "$not": { "$elemMatch": { "ingredients": { $in: allergens } } } } });
-  return Restaurant.aggregate().match(query).unwind("$menu").match({
+
+  let result = await Restaurant.aggregate().match(query).unwind("$menu").match({
     "menu.name": { '$regex': `^${item}`, '$options': 'i' }
   }).group({
     _id: "$_id",
@@ -65,6 +66,8 @@ async function searchAllergenFreeMealsByName(userId, item) {
     location: { $first: "$location" },
     menu: { $addToSet: "$menu" }
   })
+
+  return Restaurant.populate(result, { path: "menu.ingredients" })
 }
 
 /**
