@@ -24,13 +24,13 @@ Sign in through the `POST api/users/token`endpoint
 
 
 Restaurant registration would need to be done manually through the api
-as secret generation used for verification and record identification are not 
+as generated secrets, used for verification and record identification are not 
 stored locally.
 
 
 3. Sign up as client
 4. Add meals to restaurant
-4.b Add additional ingredients to meals
+5. Add additional ingredients to meals
 
 
 When restaurants are added with meals,feel free to run recommendation queries
