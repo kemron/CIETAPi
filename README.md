@@ -7,12 +7,33 @@ Allergy aware restaurant menu data
 1. Ensure Docker is installed on machine
 2. Run `docker-compose up`
 3. Access Api on port 5000
+4. Sign in as user 
+5. Have fun
 
-The system generates and validates all keys generateby it with. 
-Client secrets are not stored by must be delivereed to the client 
-upon signup. Thus the process of signing up as a user and as an admin
-through the api is required.
+**Note**
 
+A seed user by the name of Jay Jonah Jamerson has been creation;
+`
+{
+email: jjjamerson@hotmail.com,
+password:password
+}
+`
+Use this account for testing or create your own. 
+Sign in through the `POST api/users/token`endpoint
+
+
+Restaurant registration would need to be done manually through the api
+as generated secrets, used for verification and record identification are not 
+stored locally.
+
+
+3. Sign up as client
+4. Add meals to restaurant
+5. Add additional ingredients to meals
+
+
+When restaurants are added with meals,feel free to run recommendation queries
 
 
 ---------------------------------------------------------------------
