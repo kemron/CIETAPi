@@ -10,7 +10,9 @@ var server = http.createServer(app);
 server.on('error', onError);
 
 
-mongoose.connect('mongodb://localhost/cietDb');
+const connectionString = process.env.DB ? process.env.DB : "mongodb://db/cietDb";
+
+mongoose.connect(connectionString);
 mongoose.Promise = Promise;
 const connection = mongoose.connection;
 connection.once('open', () => {
