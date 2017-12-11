@@ -14,8 +14,10 @@ Allergy aware restaurant menu data
 
 A seed user by the name of Jay Jonah Jamerson has been creation;
 `
-email: jjjamerson@hotmail.com
+{
+email: jjjamerson@hotmail.com,
 passwprd:password
+}
 `
 Use this account for testing or create your own. 
 Sign in through the `POST api/users/token`endpoint
