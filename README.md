@@ -601,8 +601,8 @@ None
 * **Data Params**
 
 `{
-	"name":"Another Test",
-	"location":"Testing"
+	"name":"Olive garden",
+	"location":"123 Olive drive"
 }`
 * **Query Params**
 None
@@ -610,9 +610,10 @@ None
 
   * **Code:** 200 <br />
     **Content:** 
-	 None
-
-
+`{
+    "key": "b8fad12d-cc61-4d35-81d4-b1062f9d636d",
+    "secret": "iQq9Q0dhbsXeIjtqif_oCeElVPXWbuRnPwI4tnmYsiM"
+}`
 
 
 Get Registered Client Restaurant (Admin)
