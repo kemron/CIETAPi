@@ -49,7 +49,7 @@ None
 
    **Required:**
  
-   `id=[GUID]`
+   `id=[ingredient id]`
 
 * **Data Params**
 
