@@ -8,7 +8,6 @@ const crypto = require('crypto');
 const _ = require('lodash')
 const HttpStatus = require("http-status-codes");
 const mongoose = require('mongoose');
-const AllergenMenuFilterWorker = require('./AllergenMenuFilterWorker');
 
 module.exports = {
   searchRestaurantsByName,
@@ -22,8 +21,11 @@ module.exports = {
   removeIngredient,
   getRestaurantDetailsByClientId,
   getAllRestaurants,
-  getRestaurantMenuWithAllergenData
+  getRestaurantMenuWithAllergenData,
+  searchAllergenFreeMealsByName
 }
+
+
 
 
 
@@ -32,6 +34,37 @@ module.exports = {
  */
 function getAllRestaurants() {
   return Restaurant.find({}).exec();
+}
+
+
+/**
+ * Searches dor meals that match the item whose ingredients
+ * are allergen free and returns the restaurants offereing it 
+ * @param {String} userId 
+ * @param {String} item  name of meal to search for
+ */
+async function searchAllergenFreeMealsByName(userId, item) {
+  if (_.isEmpty(item) || !_.isString(item)) {
+    throw new InvalidArgument("item")
+  }
+  if (!userId) {
+    throw new InvalidArgument("userId");
+  }
+  let user = await UserComponent.getUserById(userId);
+  let allergens = user.allergens.map(a => a._id);
+  let query = {
+    "menu.name": { '$regex': `^${item}`, '$options': 'i' }
+  }
+  query = Object.assign(query, _.isEmpty(allergens) ? {} :
+    { "menu": { "$not": { "$elemMatch": { "ingredients": { $in: allergens } } } } });
+  return Restaurant.aggregate().match(query).unwind("$menu").match({
+    "menu.name": { '$regex': `^${item}`, '$options': 'i' }
+  }).group({
+    _id: "$_id",
+    name: { $first: "$name" },
+    location: { $first: "$location" },
+    menu: { $addToSet: "$menu" }
+  })
 }
 
 /**
@@ -81,10 +114,45 @@ async function getRestaurantMenuWithAllergenData(userId, restaurantId) {
     throw new InvalidArgument("restaurantId")
   }
 
-  let users = await AllergenMenuFilterWorker(restaurant, user.allergens);
-  return users;
+  let data = generateAllergenAnnotatedRestaurantData(restaurant, user.allergens);
+  return data;
 }
 
+
+/**
+ * Builds restaurant menu annotation data
+ * @param {Object} _restaurant 
+ * @param {Array} _allergens 
+ */
+function generateAllergenAnnotatedRestaurantData(_restaurant, _allergens) {
+  if (!_restaurant) {
+    throw new InvalidArgument("restaurant");
+  }
+  if (!_allergens || !Array.isArray(_allergens)) {
+    throw new InvalidArgument("allergens");
+  }
+
+  let menu = _restaurant.menu.map(item => {
+    let isSafe = true;
+    let newAllergenList = item.ingredients.map(
+      ingredient => {
+        let isAllergen = false;
+        if (_allergens.findIndex(allergen => allergen.id === ingredient.id) >= 0) {
+          isSafe = false;
+          isAllergen = true;
+        }
+        return Object.assign(ingredient.toJSON(), { isAllergen });
+      }
+    );
+    return Object.assign(item.toJSON(), {
+      ingredients: newAllergenList,
+      isSafe
+    });
+  });
+  let rest = _restaurant.toJSON();
+  rest.menu = menu;
+  return rest;
+}
 
 /**
  * Retrieves all restaurants with menus free of all allergens
@@ -95,11 +163,11 @@ async function findRecommendedRestaurants(userId) {
     throw new InvalidArgument("userId");
   }
   let user = await UserComponent.getUserById(userId);
-  let allergens = user.allergens.map(a => a.id);
-  const query = {
-    "menu.ingredients": { $nin: allergens }
+  let allergens = user.allergens.map(a => a._id);
+  if (_.isEmpty(allergens)) {
+    return Restaurant.find({}).populate("menu.ingredients").exec();
   }
-  return Restaurant.find(query).populate("menu.ingredients").limit(100).exec();
+  return Restaurant.find({ "menu": { "$not": { "$elemMatch": { "ingredients": { $in: allergens } } } } }).populate("menu.ingredients").exec();
 }
 
 

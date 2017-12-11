@@ -8,10 +8,18 @@ module.exports = function (app) {
 
   const jwtValidator = JwtValidatorMiddleware({ secret: app.get("secret"), appID: app.get("appID") })
 
+
+  /**
+   * Retrieves a meal ingredient/allergen
+   */
   app.get("/api/fooditems/:id", getFoodItem);
 
+
+  /**
+   * Retrives all meal ingredients/allergens
+   */
   app.get("/api/fooditems", findFoodItems);
-  
+
 }
 
 async function findFoodItems(req, resp, next) {

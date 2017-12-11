@@ -5,26 +5,49 @@ const JwtValidatorMiddleware = require('../../components/Authentication/JWTValid
 const HttpStatus = require("http-status-codes");
 const jwt = require("jsonwebtoken");
 const ApiKeyMiddleWare = require("../../components/Authentication/ApiKeyMiddleWare");
-
+const _ = require('lodash')
 
 
 module.exports = function (app) {
 
   const jwtValidator = JwtValidatorMiddleware({ secret: app.get("secret"), appID: app.get("appID") })
 
+
+
+
+  /**
+   * Retrieves restarurants where all menu items 
+   * are allergen free
+   */
   app.get("/api/restaurants/recommended",
     jwtValidator,
     getRecommendedRestaurants);
 
 
+
+  /**
+   * Retrieves restaurant menu with meals
+   * and ingredients annotated with user allergen markers
+   */
   app.get("/api/restaurants/:id/menu",
     jwtValidator,
     searchRestaurantMenu
   )
 
   /**
+   * Retrives safe versions of meals across all
+   * regitered restaurants filtered by name
+   * 
+   * eg /api/restaurants/all/menu?item=fried%20chubacca
+   */
+  app.get("/api/restaurants/all/menu/search",
+    jwtValidator,
+    searchAllergenFreeMenuItems
+  )
+
+  /**
    * Retrieves all restaurants. 
-   * Uses optional name query parameter for searching 
+   * Uses optional name query parameter for filtering by name 
    * eg /api/restaurants?name=olive%20garden"
    */
   app.get("/api/restaurants",
@@ -32,32 +55,52 @@ module.exports = function (app) {
     getRestaurants
   )
 
+  /**
+   * Registers a new client.
+   * resturns api key and secret
+   */
   app.post("/api/admin/clients",
     SchemaValidator(schemas.registerRestaurantSchema),
     registerRestaurant(app));
 
 
+  /**
+   * Retrieves the restaurant registered to client
+   */
   app.get("/api/admin/clients/me",
     ApiKeyMiddleWare(app.get("apiKeySecret")),
     getClientRestaurant
   )
 
+  /**
+   * Adds a new meal to restaurant menu for client
+   */
   app.post("/api/admin/clients/me/menuitems",
     ApiKeyMiddleWare(app.get("apiKeySecret")),
     SchemaValidator(schemas.addMenuItemSchema),
     newMenuItem);
 
+
+  /**
+   *  Removes a meal from restaurant menu for client
+   */
   app.delete("/api/admin/clients/me/menuitems/:id",
     ApiKeyMiddleWare(app.get("apiKeySecret")),
     removeMenuItem
   )
 
+  /**
+   * Adds ingredients to a menu item
+   */
   app.post("/api/admin/clients/me/menuitems/:id/ingredients",
     ApiKeyMiddleWare(app.get("apiKeySecret")),
     SchemaValidator(schemas.addIngredients),
     addIngredient
   )
 
+  /**
+   * Removes ingredient from menu item
+   */
   app.delete("/api/admin/clients/me/menuitems/:menuItemId/ingredients/:ingredientId",
     ApiKeyMiddleWare(app.get("apiKeySecret")),
     removeIngredient
@@ -66,6 +109,19 @@ module.exports = function (app) {
 }
 
 
+
+
+async function searchAllergenFreeMenuItems(req, resp, next) {
+  try {
+    let { item } = req.query;
+    if (!item || !_.isString(item) || _.isEmpty(item)) {
+      resp.status(HttpStatus.BAD_REQUEST).send("string query parameter [item] is required");
+    }
+    resp.json(await RestaurantComponent.searchAllergenFreeMealsByName(req.jwt.sub, req.query.item))
+  } catch (err) {
+    next(err)
+  }
+}
 
 function registerRestaurant(app) {
   return async (req, resp, next) => {
@@ -146,7 +202,7 @@ async function getRecommendedRestaurants(req, resp, next) {
 
 async function searchRestaurantMenu(req, resp, next) {
   try {
-    resp.json(await RestaurantComponent.getRestaurantMenuWithAllergenData(req.jwt.sub, req.id))
+    resp.json(await RestaurantComponent.getRestaurantMenuWithAllergenData(req.jwt.sub, req.params.id))
   } catch (err) {
     next(err)
   }
