@@ -81,7 +81,7 @@ Registers a new user
 
 * **URL**
 
-  api/users
+  /api/users
 
 * **Method:**
 
@@ -261,7 +261,7 @@ Remove user allergen Details
 
    **Required:**
  
-   `id=[GUID]`
+   `id=[fooditem/allergen id]`
 
 
 * **Data Params**
@@ -380,7 +380,7 @@ Restaurant menu browsing
 
    **Required:**
  
-   `id=[Guid]` - Restaurant Id
+   `id=[restaurant id]`
 
 * **Data Params**
 
@@ -458,7 +458,7 @@ Allergen free meal search
 
 * **Query Params**
 
- `item=[string] - name of meal`
+ `item=[ name of meal] -`
   
 
 * **Success Response:**
@@ -539,7 +539,7 @@ Uses optional name query parameter for filtering by name
 * **Query Params**
 
    **Optional:**
- `item=[string] - name of meal`
+ `item=[name of meal] `
   
 
 * **Success Response:**
