@@ -1,6 +1,24 @@
 # CIETAPi
 Allergy aware restaurant menu data 
 
+------------------------------------------------------------------
+**How to setup**
+
+1. Ensure Docker is installed on machine
+2. Run `docker-compose up`
+3. Access Api on port 5000
+
+The system generates and validates all keys generateby it with. 
+Client secrets are not stored by must be delivereed to the client 
+upon signup. Thus the process of signing up as a user and as an admin
+through the api is required.
+
+
+
+---------------------------------------------------------------------
+
+**API DOCUMENTATION**
+
 Get allergen/ meal ingredient
 ----
  Retrieves a meal ingredient/allergen
@@ -47,9 +65,9 @@ Get all allergen/ meal ingredients
 *  **URL Params**
 None
 
-   **Required:**
- 
-   `id=[ingredient id]`
+ * **Query Params**
+   **Optional:**
+   `name=[ingredient name]`
 
 * **Data Params**
 
