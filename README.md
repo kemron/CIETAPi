@@ -17,7 +17,7 @@ Get allergen/ meal ingredient
 
    **Required:**
  
-   `id=[GUID]`
+   `id=[ingredient id]`
 
 * **Data Params**
 
