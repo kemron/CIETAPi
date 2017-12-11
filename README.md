@@ -59,7 +59,7 @@ Get all allergen/ meal ingredients
 *  **URL Params**
 None
 
-   **Required:**
+   **Optional:**
  
    `id=[ingredient id]`
 
