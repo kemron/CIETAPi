@@ -33,6 +33,7 @@ Get allergen/ meal ingredient
 }`
  
 
+
 Get all allergen/ meal ingredients
 ----
  Retrives all meal ingredients/allergens
@@ -75,6 +76,7 @@ None
 ]`
  
 
+
  **Register User**
 ----
 Registers a new user
@@ -113,6 +115,7 @@ None
   
 
 
+
 **Get Access Token**
 ----
    Retrieves access token for subsequent api calls for user account 
@@ -147,6 +150,7 @@ None
     "success": false,
     "message": "Authentication failed. Credentials mismatch"
 }`
+
 
 
 Get user profile
@@ -198,6 +202,7 @@ None
 }`
 
  
+ 
 Add user allergen Details
 ----
  Adds allergens to user profile
@@ -242,6 +247,7 @@ None
 }`
 
  
+
 
 
 Remove user allergen Details
