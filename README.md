@@ -585,6 +585,34 @@ Uses optional name query parameter for filtering by name
  
 
 
+Register new restaurant client (Admin)
+----
+Registers a new client.
+* **URL**
+
+/api/admin/clients
+
+* **Method:**
+
+  `POST`
+  
+*  **URL Params**
+None
+* **Data Params**
+
+`{
+	"name":"Another Test",
+	"location":"Testing"
+}`
+* **Query Params**
+None
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** 
+	 None
+
+
 
 
 Get Registered Client Restaurant (Admin)
