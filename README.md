@@ -16,7 +16,7 @@ A seed user by the name of Jay Jonah Jamerson has been creation;
 `
 {
 email: jjjamerson@hotmail.com,
-passwprd:password
+password:password
 }
 `
 Use this account for testing or create your own. 
