@@ -61,7 +61,7 @@ None
 
  * **Query Params**
    **Optional:**
-   `id=[ingredient id]`
+   `name=[ingredient name]`
 
 * **Data Params**
 
