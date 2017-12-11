@@ -6,7 +6,7 @@ How to setup
 
 1. Ensure Docker is installed on machine
 2. Run `docker-compose up`
-3  Access Api on port 5000
+3. Access Api on port 5000
 
 
 
